@@ -1,0 +1,95 @@
+# === General ===
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+
+# === OS Generated Files ===
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+# Windows
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# === IDEs/Editors ===
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+
+# VSCode
+.vscode/
+
+# === Node.js (Frontend) ===
+frontend/node_modules/
+frontend/.env
+frontend/.next/
+frontend/.parcel-cache
+frontend/dist/
+frontend/build/
+
+# === Java/Spring Boot (Backend) ===
+backend/**/target/
+backend/**/logs/
+backend/**/.classpath
+backend/**/.project
+backend/**/.settings
+backend/**/.env
+
+# === Docker ===
+*.pid
+docker-compose.override.yml
+
+# === Redis/Kafka ===
+# (If storing config locally)
+*.rdb
+*.aof
+__pycache__/
+
+# === Database Files ===
+*.db
+*.sql
+*.sqlite
+.env
+*.env.local
+
+# === Test/Build Artifacts ===
+*.war
+*.jar
+*.class
+
+# === Kubernetes ===
+*.crt
+*.key
+*.pem
+
+# === Logs ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === Coverage Reports ===
+coverage/
+frontend/coverage/
+backend/**/coverage/
+.nyc_output
+
+# === Misc ===
+*.bak
+*.old
+*.orig
+*.rej
+*.swo
+*.swn
+*.tmp
+*.swp
+*.swo
+*.DS_Store
