@@ -9,9 +9,9 @@ public class BidsphereApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BidsphereApplication.class, args);
 
-		while(true){
+//		while(true){
 			System.out.println("Working");
-		}
+//		}
 	}
 
 }
