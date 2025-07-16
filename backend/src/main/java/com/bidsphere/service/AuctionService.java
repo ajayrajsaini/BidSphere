@@ -1,5 +1,6 @@
 package com.bidsphere.service;
 
+import com.bidsphere.dto.AuctionCompleteRequest;
 import com.bidsphere.dto.AuctionRequest;
 import com.bidsphere.dto.AuctionResponse;
 import com.bidsphere.model.Auction;
@@ -85,7 +86,7 @@ public class AuctionService {
         return toResponse(auctionRepository.save(auction));
     }
 
-    public AuctionResponse completeAuction(UUID id) {
+    public AuctionResponse completeAuction(UUID id, AuctionCompleteRequest auctionCompleteRequest) {
         Optional<Auction> optionalAuction = auctionRepository.findById(id);
         if (optionalAuction.isEmpty()) {
             throw new RuntimeException("Auction not found");
@@ -95,6 +96,10 @@ public class AuctionService {
             throw new RuntimeException("Auction is already completed");
         }
         auction.setStatus(AuctionStatus.COMPLETED);
+        auction.setBuyerId(auctionCompleteRequest.getBuyerId());
+        if (auctionCompleteRequest.getRemarks() != null) {
+            auction.setRemarks(auctionCompleteRequest.getRemarks());
+        }
         Auction updatedAuction = auctionRepository.save(auction);
         return toResponse(updatedAuction);
     }
@@ -113,6 +118,12 @@ public class AuctionService {
         response.setSellerId(auction.getSellerId());
         response.setCreatedAt(auction.getCreatedAt());
         response.setUpdatedAt(auction.getUpdatedAt());
+        if(auction.getStatus() == AuctionStatus.COMPLETED && auction.getBuyerId() != null){
+            response.setBuyerId(auction.getBuyerId());
+        }
+        if(auction.getRemarks() != null){
+            response.setRemarks(auction.getRemarks());
+        }
         return response;
     }
 

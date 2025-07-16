@@ -1,6 +1,7 @@
 package com.bidsphere.controller;
 
 
+import com.bidsphere.dto.AuctionCompleteRequest;
 import com.bidsphere.dto.AuctionRequest;
 import com.bidsphere.dto.AuctionResponse;
 import com.bidsphere.dto.RegisterRequest;
@@ -52,7 +53,7 @@ public class AuctionController {
     }
 
     @PatchMapping("/{id}/complete")
-    public ResponseEntity<AuctionResponse> completeAuction(@PathVariable UUID id) {
-        return ResponseEntity.ok(service.completeAuction(id));
+    public ResponseEntity<AuctionResponse> completeAuction(@PathVariable UUID id, @RequestBody AuctionCompleteRequest auctionCompleteRequest) {
+        return ResponseEntity.ok(service.completeAuction(id, auctionCompleteRequest));
     }
 }

@@ -49,6 +49,12 @@ public class Auction {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
+    @Column(name = "buyer_id")
+    private UUID buyerId;
+
+    @Column(name = "remarks")
+    private String remarks;
+
     @PreUpdate
     public void setUpdatedAt() {
         this.updatedAt = LocalDateTime.now();

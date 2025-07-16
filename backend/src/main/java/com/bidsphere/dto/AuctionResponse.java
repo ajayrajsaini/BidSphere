@@ -1,6 +1,7 @@
 package com.bidsphere.dto;
 
 import com.bidsphere.model.AuctionStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuctionResponse {
     private UUID id;
     private String title;
@@ -22,4 +24,6 @@ public class AuctionResponse {
     private UUID sellerId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private UUID buyerId;
+    private String remarks;
 }
