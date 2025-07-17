@@ -3,6 +3,7 @@ package com.bidsphere.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Component
 public class JwtUtil {
-    private String SECRET_KEY = "key";   //TODO: will replace later
+    private String SECRET_KEY = "VNHgMl78/k0YkK0/HafUisC0yHtmZ6gEjm5wJBvsRmA=";   //TODO: will replace later
 
     public String extractUsername(String token){
         return extractClaim(token,Claims::getSubject);
