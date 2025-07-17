@@ -7,6 +7,7 @@ import com.bidsphere.model.Auction;
 import com.bidsphere.model.AuctionStatus;
 import com.bidsphere.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,12 +46,19 @@ public class AuctionService {
         return responses;
     }
 
-
+    @Autowired
+    private AuctionCacheService auctionCacheService;
     public AuctionResponse getAuctionById(UUID id) {
+        Auction cached = auctionCacheService.getAuctionFromCache(id.toString());
+        if (cached != null) {
+            return toResponse(cached);
+        }
         Optional<Auction> optionalAuction = auctionRepository.findById(id);
         if(optionalAuction.isEmpty()){
             throw new RuntimeException("Auction not found");
         }
+        // Cache it for future
+        auctionCacheService.cacheAuction(optionalAuction.get());
         return toResponse(optionalAuction.get());
     }
 
