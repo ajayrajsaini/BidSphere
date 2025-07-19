@@ -37,9 +37,13 @@ public class AuctionService {
     }
 
     public List<AuctionResponse> getAllAuctions() {
-        List<Auction> auctions = auctionRepository.findAll();
+        List<Auction> cachedAuctions = auctionCacheService.getAllAuctionsFromCache();
         List<AuctionResponse> responses = new ArrayList<>();
-        for (Auction auction : auctions) {
+        if (cachedAuctions == null) {
+            cachedAuctions = auctionRepository.findAll();
+            auctionCacheService.cacheAllAuctions(cachedAuctions);
+        }
+        for (Auction auction : cachedAuctions) {
             AuctionResponse response = toResponse(auction);
             responses.add(response);
         }
@@ -48,13 +52,14 @@ public class AuctionService {
 
     @Autowired
     private AuctionCacheService auctionCacheService;
+
     public AuctionResponse getAuctionById(UUID id) {
         Auction cached = auctionCacheService.getAuctionFromCache(id.toString());
         if (cached != null) {
             return toResponse(cached);
         }
         Optional<Auction> optionalAuction = auctionRepository.findById(id);
-        if(optionalAuction.isEmpty()){
+        if (optionalAuction.isEmpty()) {
             throw new RuntimeException("Auction not found");
         }
         // Cache it for future
@@ -64,7 +69,7 @@ public class AuctionService {
 
     public AuctionResponse updateAuction(UUID id, AuctionRequest request) {
         Optional<Auction> optionalAuction = auctionRepository.findById(id);
-        if(optionalAuction.isEmpty()){
+        if (optionalAuction.isEmpty()) {
             throw new RuntimeException("Auction not found");
         }
         Auction auction = optionalAuction.get();
@@ -74,16 +79,20 @@ public class AuctionService {
         auction.setStartTime(request.getStartTime());
         auction.setEndTime(request.getEndTime());
         Auction updated = auctionRepository.save(auction);
+        // Sync cache
+
+        auctionCacheService.removeAllAuctions();
         return toResponse(updated);
     }
 
     public void deleteAuction(UUID id) {
         auctionRepository.deleteById(id);
+        auctionCacheService.removeAuctionCache(id.toString());
     }
 
     public AuctionResponse cancelAuction(UUID id) {
         Optional<Auction> optionalAuction = auctionRepository.findById(id);
-        if(optionalAuction.isEmpty()){
+        if (optionalAuction.isEmpty()) {
             throw new RuntimeException("Auction not found");
         }
         Auction auction = optionalAuction.get();
@@ -91,7 +100,12 @@ public class AuctionService {
             throw new RuntimeException("Auction is already cancelled");
         }
         auction.setStatus(AuctionStatus.CANCELLED);
-        return toResponse(auctionRepository.save(auction));
+
+        Auction saved = auctionRepository.save(auction);
+
+        auctionCacheService.cacheAuction(saved);
+        auctionCacheService.removeAllAuctions();
+        return toResponse(saved);
     }
 
     public AuctionResponse completeAuction(UUID id, AuctionCompleteRequest auctionCompleteRequest) {
@@ -109,6 +123,8 @@ public class AuctionService {
             auction.setRemarks(auctionCompleteRequest.getRemarks());
         }
         Auction updatedAuction = auctionRepository.save(auction);
+        auctionCacheService.cacheAuction(updatedAuction);
+        auctionCacheService.removeAllAuctions();
         return toResponse(updatedAuction);
     }
 
@@ -126,10 +142,10 @@ public class AuctionService {
         response.setSellerId(auction.getSellerId());
         response.setCreatedAt(auction.getCreatedAt());
         response.setUpdatedAt(auction.getUpdatedAt());
-        if(auction.getStatus() == AuctionStatus.COMPLETED && auction.getBuyerId() != null){
+        if (auction.getStatus() == AuctionStatus.COMPLETED && auction.getBuyerId() != null) {
             response.setBuyerId(auction.getBuyerId());
         }
-        if(auction.getRemarks() != null){
+        if (auction.getRemarks() != null) {
             response.setRemarks(auction.getRemarks());
         }
         return response;
