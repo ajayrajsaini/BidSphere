@@ -26,7 +26,7 @@ public class UserController {
 
         if(userOptional.isPresent()){
             User user = userOptional.get();
-            UserDto userDto = new UserDto(user.getUsername(), user.getEmail());
+            UserDto userDto = new UserDto(user.getFirstname(), user.getLastname(), user.getUsername(), user.getEmail(), user.getAddress());
             return ResponseEntity.ok(userDto);
         }else{
             return ResponseEntity.notFound().build();
@@ -40,7 +40,18 @@ public class UserController {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setEmail(updatedUserDto.getEmail());
+            if(updatedUserDto.getFirstname() != null && !updatedUserDto.getFirstname().isBlank()){
+                user.setFirstname(updatedUserDto.getFirstname());
+            }
+            if(updatedUserDto.getLastname() != null && !updatedUserDto.getLastname().isBlank()){
+                user.setLastname(updatedUserDto.getLastname());
+            }
+            if(updatedUserDto.getEmail() != null && !updatedUserDto.getEmail().isBlank()) {
+                user.setEmail(updatedUserDto.getEmail());
+            }
+            if(updatedUserDto.getAddress() != null && !updatedUserDto.getAddress().isBlank()){
+                user.setAddress(updatedUserDto.getAddress());
+            }
             userRepository.save(user);
             return ResponseEntity.ok("User updated successfully.");
         } else {
