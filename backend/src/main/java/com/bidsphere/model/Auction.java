@@ -13,7 +13,6 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Auction implements Serializable {
 
     @Id

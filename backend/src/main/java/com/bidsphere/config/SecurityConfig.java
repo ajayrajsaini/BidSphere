@@ -46,7 +46,9 @@ public class SecurityConfig {
                                 "/webjars/**",                 // optional, if using webjars
                                 "/v2/api-docs",                // for backward compatibility
                                 "/swagger-resources/**",
-                                "/auction/**"// old swagger config
+                                "/auction/**",
+                                "/bid/**",
+                                "/bid/createBid/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );
