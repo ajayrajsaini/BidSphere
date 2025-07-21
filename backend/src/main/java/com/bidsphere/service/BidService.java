@@ -7,6 +7,9 @@ import com.bidsphere.repository.BidRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BidService {
@@ -18,6 +21,15 @@ public class BidService {
         bid.setAmount(bidRequest.getAmount());
         Bid bidSaved = bidRepository.save(bid);
         return generateBidResponse(bidSaved);
+    }
+
+    public List<BidResponse> getAllBid(){
+        List<BidResponse> responses = new ArrayList<>();
+        List<Bid> allBids = bidRepository.findAll();
+        for(Bid bid : allBids){
+            responses.add(generateBidResponse(bid));
+        }
+        return responses;
     }
 
     public BidResponse generateBidResponse(Bid bid){
