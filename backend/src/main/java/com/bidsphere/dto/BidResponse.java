@@ -1,5 +1,6 @@
 package com.bidsphere.dto;
 
+import com.bidsphere.model.BidStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -15,5 +16,6 @@ public class BidResponse {
     private UUID bidderId;
     private BigDecimal amount;
     private LocalDateTime timestamp;
+    private BidStatus status;
     private String reason;
 }

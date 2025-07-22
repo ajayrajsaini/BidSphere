@@ -39,6 +39,7 @@ public class BidService {
         bidResponse.setBidderId(bid.getBidderId());
         bidResponse.setAmount(bid.getAmount());
         bidResponse.setTimestamp(bid.getTimeStamp());
+        bidResponse.setStatus(bid.getStatus());
         bidResponse.setReason(bid.getReason());
         return bidResponse;
     }
