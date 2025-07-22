@@ -10,7 +10,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name="bids")
+@Table(name="bids", indexes = {
+        @Index(name = "idx_bids_auction_id", columnList = "auction_id"),
+        @Index(name = "idx_bids_bidder_id", columnList = "bidder_id"),
+        @Index(name = "idx_bids_amount", columnList = "amount"),
+        @Index(name = "idx_bids_timestamp", columnList = "timestamp"),
+        @Index(name = "idx_bids_auction_amount", columnList = "auction_id, amount DESC"),
+        @Index(name = "idx_bids_bid_status", columnList = "status")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,7 +39,7 @@ public class Bid {
     private LocalDateTime timeStamp = LocalDateTime.now();
 
     @Column(nullable = false)
-    private BidStatus status = BidStatus.VALID; // or use Enum
+    private BidStatus status = BidStatus.VALID;
 
     private String reason;
 
