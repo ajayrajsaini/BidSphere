@@ -6,10 +6,12 @@ import com.bidsphere.dto.AuctionResponse;
 import com.bidsphere.model.Auction;
 import com.bidsphere.model.AuctionStatus;
 import com.bidsphere.repository.AuctionRepository;
+import com.bidsphere.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,9 +22,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuctionService {
     private final AuctionRepository auctionRepository;
+    @Autowired
+    private KafkaProducerService kafkaProducer;
+//    private final UserRepository userRepository;
 
     public AuctionResponse createAuction(AuctionRequest request) {
+//        if(user exist check)
+        LocalDateTime now = LocalDateTime.now();
+        if (request.getStartTime().isBefore(now)) {
+            throw new IllegalArgumentException("Start time must be in the future.");
+        }
+
+        if (request.getEndTime().isBefore(request.getStartTime())) {
+            throw new IllegalArgumentException("End time must be after start time.");
+        }
         Auction auction = new Auction();
+
         auction.setTitle(request.getTitle());
         auction.setDescription(request.getDescription());
         auction.setStartingPrice(request.getStartingPrice());
@@ -33,6 +48,8 @@ public class AuctionService {
         auction.setStatus(AuctionStatus.ACTIVE); // default status
 
         Auction saved = auctionRepository.save(auction);
+
+        kafkaProducer.sendAuctionEvent("Auction created: " + saved.getId());
         return toResponse(saved);
     }
 
