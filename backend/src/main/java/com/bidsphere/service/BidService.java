@@ -2,9 +2,12 @@ package com.bidsphere.service;
 
 import com.bidsphere.dto.BidRequest;
 import com.bidsphere.dto.BidResponse;
+import com.bidsphere.model.Auction;
 import com.bidsphere.model.Bid;
 import com.bidsphere.model.BidStatus;
+import com.bidsphere.repository.AuctionRepository;
 import com.bidsphere.repository.BidRepository;
+import com.bidsphere.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +21,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BidService {
     private final BidRepository bidRepository;
+    private final UserRepository userRepository;
+    private final AuctionRepository auctionRepository;
 
     public BidResponse createBid(BidRequest bidRequest) {
+        if (!userRepository.existsById(bidRequest.getBidderId())) {
+            throw new RuntimeException("Bidder not found.");
+        }
+        Optional<Auction> optionalAuction= auctionRepository.findById(bidRequest.getAuctionId());
+        if (optionalAuction == null) {
+            throw new RuntimeException("Auction not found.");
+        }
+
+        if(optionalAuction.get().getCurrentPrice().compareTo(bidRequest.getAmount())>=0){
+            throw new RuntimeException("Bid amount must be greater than the current price");
+        }
         Bid bid = new Bid();
         bid.setAuctionId(bidRequest.getAuctionId());
         bid.setBidderId(bidRequest.getBidderId());
@@ -50,6 +66,7 @@ public class BidService {
         }
         return generateBidResponse(bidRepository.save(bid));
     }
+
     public BidResponse updateBidStatus(UUID id, BidStatus newStatus) {
         Optional<Bid> optionalBid = bidRepository.findById(id);
         if (optionalBid == null) {

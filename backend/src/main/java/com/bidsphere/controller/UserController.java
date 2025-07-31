@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -82,7 +83,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/username")
-    public ResponseEntity<?> getUsernameById(@PathVariable Long id) {
+    public ResponseEntity<?> getUsernameById(@PathVariable UUID id) {
         return userRepository.findById(id)
                 .map(user -> ResponseEntity.ok(user.getUsername()))
                 .orElse(ResponseEntity.notFound().build());

@@ -21,13 +21,15 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AuctionService {
+    private final UserRepository userRepository;
     private final AuctionRepository auctionRepository;
     @Autowired
     private KafkaProducerService kafkaProducer;
-//    private final UserRepository userRepository;
 
     public AuctionResponse createAuction(AuctionRequest request) {
-//        if(user exist check)
+        if(!userRepository.existsById(request.getSellerId())){
+            throw  new RuntimeException("Seller not found");
+        }
         LocalDateTime now = LocalDateTime.now();
         if (request.getStartTime().isBefore(now)) {
             throw new IllegalArgumentException("Start time must be in the future.");
