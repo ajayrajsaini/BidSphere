@@ -17,7 +17,7 @@ public class JwtUtil {
     private String SECRET_KEY = "VNHgMl78/k0YkK0/HafUisC0yHtmZ6gEjm5wJBvsRmA=";   //TODO: will replace later
 
     public String extractUsername(String token){
-        return extractClaim(token,Claims::getSubject);
+        return extractAllClaims(token).getSubject();
     }
 
     public Date extractExpiration(String token){

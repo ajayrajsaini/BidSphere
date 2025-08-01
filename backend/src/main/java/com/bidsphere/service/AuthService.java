@@ -18,7 +18,9 @@ import org.springframework.security.core.AuthenticationException;
 
 @Service
 public class AuthService {
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired

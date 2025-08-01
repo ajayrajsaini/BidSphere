@@ -7,12 +7,16 @@ import com.bidsphere.model.User;
 import com.bidsphere.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -29,7 +33,8 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getUserDetails(Authentication authentication){
+    public ResponseEntity<?> getUserDetails(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Optional<User> userOptional = userRepository.findByUsername(username);
 
@@ -43,6 +48,7 @@ public class UserController {
     }
 
     @PutMapping("/update")
+    @CacheEvict(value = "userDetailsCache" , key = "#uesrname")
     public ResponseEntity<?> updateUser(Authentication authentication,@Valid @RequestBody UserDto updatedUserDto) {
         String username = authentication.getName();
         Optional<User> userOptional = userRepository.findByUsername(username);
@@ -107,5 +113,11 @@ public class UserController {
         userRepository.save(user);
 
         return ResponseEntity.ok("Password changed successfully");
+    }
+
+    @GetMapping("/allUsers")
+    public ResponseEntity<?> getAllUsers(){
+        List<User> users = userRepository.findAll();
+        return ResponseEntity.ok(users);
     }
 }
