@@ -56,6 +56,7 @@ public class AuthService {
 
     public String login(String username, String password) throws Exception {
         try{
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
@@ -63,7 +64,7 @@ public class AuthService {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             return jwtUtil.generateToken(userDetails);
         }catch (AuthenticationException e){
-            throw new Exception("Invalid Username or password");
+            throw new Exception("Invalid Username or password "+e.getMessage());
         }
     }
 }

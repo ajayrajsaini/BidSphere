@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private RedisTemplate redisTemplate;
 
     @Override
-    @Cacheable(value = "userDetailCache", key = "#username")
+//    @Cacheable(value = "userDetailCache", key = "#username")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
